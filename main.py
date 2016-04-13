@@ -48,6 +48,7 @@ def getMusic():
 
 def getNextPage(link):
     content = crawler.readlink(link)
+    print link
     try:
         next_page = content.find('span', attrs={'class':'next'}).find('a')['href']
         page_cache.append(next_page)
@@ -60,16 +61,10 @@ def getAllPages():
     
     for category in categories: 
         starting_page = music_server + user_name + '/' + category
-        print starting_page
         content = crawler.readlink(starting_page)
         
-        print starting_page
+        # print starting_page
         getNextPage(starting_page)
-       
-        
-        for pages in page_cache:
-            print pages
-
             
 # i was planning to get all the detail data of the CD
 # turns out only scroe i was interested
@@ -84,9 +79,10 @@ def getOfficialDetail():
         
         try:
             cd['douban_score']
+            print('already in the database')
             
-            #print link
-        
+        except KeyError:
+            
             try:
                 douban_score = content.find('strong',attrs={'class':'ll rating_num'}).text
             except AttributeError:
@@ -103,14 +99,13 @@ def getOfficialDetail():
             }
         
             mongo.update(new_entities, cd_id)  
-        except:
-            print('already in the database')
+            
         
   
     
 def main():
-    getAllPages()
-    getMusic()
+    #getAllPages()
+    #getMusic()
     getOfficialDetail()
 
 if __name__ == "__main__":
